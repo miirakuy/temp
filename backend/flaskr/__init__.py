@@ -183,7 +183,7 @@ def create_app(test_config=None):
 
       return jsonify({
         'success': True,
-        'questions': paginate_questions(request, question_entry),
+        'questions': [q.format() for q in question_entry],
         'total_questions': len(question_entry),
         'current_category': current_category
       })
