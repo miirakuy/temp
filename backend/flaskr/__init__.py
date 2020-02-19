@@ -7,6 +7,7 @@ from flask import (
 )
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from  sqlalchemy import func
 import random
 
 from models import setup_db, Question, Category
@@ -52,10 +53,12 @@ def create_app(test_config=None):
   @app.route('/categories', methods=['GET'])
   def get_all_categories():
     categories = Category.query.order_by(Category.id).all()
-    categories_list = [category.type for category in categories]
+    categories_dict = {}
+    for category in categories:
+      categories_dict[category.id] = category.type
     
     return jsonify({
-      'categories': categories_list
+      'categories': categories_dict
     })
 
   '''
@@ -89,7 +92,7 @@ def create_app(test_config=None):
 
     return jsonify({
       'questions': questions,
-      'total_questions': len(questions),
+      'total_questions': len(question_entry),
       'categories': categories_dict,
       'current_category': current_category
     })
@@ -223,7 +226,23 @@ def create_app(test_config=None):
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
-  
+  @app.route('/quizzes', methods=['POST'])
+  def play_quizzes():
+    body = request.get_json()
+    previous_questions = body.get('previous_questions')
+    quiz_category = body.get('quiz_category')
+
+    if not quiz_category:
+        return abort(400)
+
+    if quiz_category['id'] == 0:
+      question = Question.query.filter(Question.id.notin_(previous_questions)).order_by(func.random()).first()
+    else:
+      question = Question.query.filter(Question.category == quiz_category['id']).filter(Question.id.notin_(previous_questions)).order_by(func.random()).first()
+
+    return jsonify({
+        'question': question.format()
+    })
 
   '''
   @TODO: 
