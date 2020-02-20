@@ -343,7 +343,8 @@ def create_app(test_config=None):
       if quiz_category['id'] == 0:
         question = Question.query.filter(Question.id.notin_(previous_questions)).order_by(func.random()).first()
       else:
-        question = Question.query.filter(Question.category == quiz_category['id']).filter(Question.id.notin_(previous_questions)).order_by(func.random()).first()
+        question = Question.query.filter(Question.category == quiz_category['id']).filter(Question.id.notin_
+        (previous_questions)).order_by(func.random()).first()
 
       return jsonify({
           'success': True,
@@ -392,4 +393,3 @@ def create_app(test_config=None):
     }), 422
 
   return app
-  
