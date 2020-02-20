@@ -13,20 +13,12 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
-def paginate_questions(request, selection):
-  page = request.args.get('page', 1, type=int)
-  start = (page - 1) * QUESTIONS_PER_PAGE
-  end = start + QUESTIONS_PER_PAGE
-
-  questions = [question.format() for question in selection]
-  current_questions = questions[start:end]
-
-  return current_questions
-
 def create_app(test_config=None):
-  """Create and configure the app and allow CORS."""
+  """Initialize the core application."""
   app = Flask(__name__, instance_relative_config=True)
   setup_db(app)
+
+  """Initialize Plugin."""
   db = SQLAlchemy(app)
 
   '''
@@ -34,6 +26,25 @@ def create_app(test_config=None):
   '''
   CORS(app, resource={r"/api.*": {"origin": "*"}})
 
+  def paginate_questions(request, selection):
+    """
+    Returns questions to be displayed per user request.
+    Args:
+        request: A integer value representing a page number.
+        selection: A list of dictionaries representing all questions. 
+    Returns:
+        current_questions: A list of dictionaries representing sets of questions.
+        The number of questions to be displayed is controled by QUESTIONS_PER_PAGE constant.
+    """
+    page = request.args.get('page', 1, type=int)
+    start = (page - 1) * QUESTIONS_PER_PAGE
+    end = start + QUESTIONS_PER_PAGE
+
+    questions = [question.format() for question in selection]
+    current_questions = questions[start:end]
+
+    return current_questions
+  
   '''
   @TODO: Use the after_request decorator to set Access-Control-Allow
   '''
@@ -88,14 +99,14 @@ def create_app(test_config=None):
   @app.route('/questions', methods=['GET'])
   def retrieve_questions():
     """
-    Returns all questions (10 questions per page), total number of questions, 
+    Returns all questions, total number of questions, 
     all categories, and the categories in the currently displayed page.
 
     Args:
         None.
     Returns:
         success: A boolean True representing information retrieval succeeds.
-        questions: A list of 10 dictionaries representing sets of questions. 
+        questions: A list of dictionaries representing sets of questions. 
         total_questions: An integer value representing a total number of questions.
         categories: A dictionaly representing all categories.
         current_category: A list of the categories of currently displayed questions.
@@ -272,9 +283,9 @@ def create_app(test_config=None):
         id: An integer value representing a category.
     Returns:
         success: A boolean True representing information retrieval succeeds.
-        questions: A list of dictionaries representing sets of questions 
+        questions: A list of dictionaries representing sets of questions.
         corresponding to the selected category.
-        total_questions: An integer value representing a total number of questions
+        total_questions: An integer value representing a total number of questions.
         corresponding to the selected category.
         current_category: A list of the categories of currently displayed questions.
     Raises:
@@ -308,21 +319,39 @@ def create_app(test_config=None):
   '''
   @app.route('/quizzes', methods=['POST'])
   def play_quizzes():
+    """
+    Returns question randomly from all questions of the selected 
+    category or all questions.
+
+    Args:
+        None.
+    Returns:
+        success: A boolean True representing information retrieval succeeds.
+        questions: A list of dictionaries representing sets of questions.
+    Raises:
+        HTTP 422 Unprocessable Entity Error: If no category is given.
+        HTTP 404 Not Found: If question information retrieval fails.
+    """
     body = request.get_json()
     previous_questions = body.get('previous_questions')
     quiz_category = body.get('quiz_category')
 
-    if not quiz_category:
-      return abort(400)
+    try:
+      if not quiz_category:
+        return abort(422)
 
-    if quiz_category['id'] == 0:
-      question = Question.query.filter(Question.id.notin_(previous_questions)).order_by(func.random()).first()
-    else:
-      question = Question.query.filter(Question.category == quiz_category['id']).filter(Question.id.notin_(previous_questions)).order_by(func.random()).first()
+      if quiz_category['id'] == 0:
+        question = Question.query.filter(Question.id.notin_(previous_questions)).order_by(func.random()).first()
+      else:
+        question = Question.query.filter(Question.category == quiz_category['id']).filter(Question.id.notin_(previous_questions)).order_by(func.random()).first()
 
-    return jsonify({
-        'question': question.format()
-    })
+      return jsonify({
+          'success': True,
+          'question': question.format()
+      })
+
+    except Exception:
+      abort(404)
 
   '''
   @TODO: 
