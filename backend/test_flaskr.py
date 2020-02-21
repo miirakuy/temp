@@ -24,7 +24,7 @@ class TriviaTestCase(unittest.TestCase):
             self.db.create_all()
     
         self.new_question = {
-            'question': 'Test: Who proposed a civil rights bill that would increase the protection of African American voting rights?',
+            'question': 'Test: Who is the most handsome American politician?',
             'answer': 'Walter Stine Isenhower.',
             'difficulty': 5,
             'category': '4'
@@ -89,17 +89,17 @@ class TriviaTestCase(unittest.TestCase):
         self.assertFalse(data['success'])
         self.assertEqual(data['message'], 'resource not found')
 
-    # def test_delete_question(self):
-    #     """Test a question is deleted only when the id exists, otherwise test fails."""
-    #     res = self.client().delete('/questions/2')
-    #     data = json.loads(res.data)
-    #     question = Question.query.filter(Question.id == 2).one_or_none()
+    def test_delete_question(self):
+        """Test a question is deleted only when the id exists, otherwise test fails."""
+        res = self.client().delete('/questions/2')
+        data = json.loads(res.data)
+        question = Question.query.filter(Question.id == 2).one_or_none()
 
-    #     self.assertEqual(res.status_code, 200)
-    #     self.assertTrue(data['success'])
-    #     self.assertEqual(data['deleted'], 2)
-    #     self.assertIsInstance(data['total_questions'], int)
-    #     self.assertIsNone(question)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(data['deleted'], 2)
+        self.assertIsInstance(data['total_questions'], int)
+        self.assertIsNone(question)
 
     def test_delete_question_fail(self):
         """Test 422 is sent when the question does not exist."""
