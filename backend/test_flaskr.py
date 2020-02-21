@@ -76,6 +76,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['success'])
         self.assertEqual(len(data['questions']), QUESTIONS_PER_PAGE)
         self.assertIsInstance(data['questions'], list)
+        self.assertEqual(data['total_questions'], 19)
         self.assertIsInstance(data['total_questions'], int)
         self.assertIsInstance(data['categories'], dict)
         self.assertIsInstance(data['current_category'], list)
@@ -91,13 +92,13 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_delete_question(self):
         """Test a question is deleted only when the id exists, otherwise test fails."""
-        res = self.client().delete('/questions/2')
+        res = self.client().delete('/questions/4')
         data = json.loads(res.data)
-        question = Question.query.filter(Question.id == 2).one_or_none()
+        question = Question.query.filter(Question.id == 4).one_or_none()
 
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
-        self.assertEqual(data['deleted'], 2)
+        self.assertEqual(data['deleted'], 4)
         self.assertIsInstance(data['total_questions'], int)
         self.assertIsNone(question)
 
@@ -164,13 +165,13 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_retrieve_questions_by_category(self):
         """Test questions are retrived by category."""
-        res = self.client().get('/categories/5/questions')
+        res = self.client().get('/categories/3/questions')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
         self.assertTrue(data['questions'])
-        self.assertEqual(len(data['questions']), 2)
+        self.assertEqual(len(data['questions']), 3)
         self.assertIsInstance(data['total_questions'], int)
         self.assertIsInstance(data['current_category'], list)
 

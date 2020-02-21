@@ -329,7 +329,7 @@ def create_app(test_config=None):
   and shown whether they were correct or not. 
   '''
   @app.route('/quizzes', methods=['POST'])
-  def play_quizzes():
+  def quizzes():
     """
     Returns question randomly from all questions of the selected 
     category or all questions.
@@ -348,7 +348,7 @@ def create_app(test_config=None):
     quiz_category = body.get('quiz_category')
 
     try:
-      if quiz_category['id'] not in [0, 1, 2, 3, 4, 5, 6]:
+      if int(quiz_category['id']) not in [0, 1, 2, 3, 4, 5, 6]:
         abort(404)
 
       if quiz_category['id'] == 0:
