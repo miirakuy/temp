@@ -72,14 +72,14 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
 
         QUESTIONS_PER_PAGE = 10
+        TOTAL_QUESTIONS = 19
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
         self.assertEqual(len(data['questions']), QUESTIONS_PER_PAGE)
         self.assertIsInstance(data['questions'], list)
-        self.assertEqual(data['total_questions'], 19)
+        self.assertEqual(data['total_questions'], TOTAL_QUESTIONS)
         self.assertIsInstance(data['total_questions'], int)
         self.assertIsInstance(data['categories'], dict)
-        self.assertIsInstance(data['current_category'], list)
 
     def test_retrieve_paginated_questions_fail(self):
         """Test 404 is sent when invalid page number is given."""
@@ -92,23 +92,16 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_delete_question(self):
         """Test a question is deleted only when the id exists, otherwise test fails."""
-<<<<<<< HEAD
         res = self.client().delete('/questions/4')
         data = json.loads(res.data)
-        question = Question.query.filter(Question.id == 4).one_or_none()
+        question = Question.query.get(4)
 
+        TOTAL_QUESTIONS = 19
+        TEST_CREATE_QUESTION = 1
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
         self.assertEqual(data['deleted'], 4)
-=======
-        res = self.client().delete('/questions/2')
-        data = json.loads(res.data)
-        question = Question.query.filter(Question.id == 2).one_or_none()
-
-        self.assertEqual(res.status_code, 200)
-        self.assertTrue(data['success'])
-        self.assertEqual(data['deleted'], 2)
->>>>>>> 7886bbf096389b9ace4ee0bd1f16d05e7e06dcd1
+        self.assertEqual(data['total_questions'], TOTAL_QUESTIONS - 1 + TEST_CREATE_QUESTION)
         self.assertIsInstance(data['total_questions'], int)
         self.assertIsNone(question)
 
