@@ -111,7 +111,8 @@ def create_app(test_config=None):
         categories: A dictionaly representing all categories.
         current_category: A list of the categories of currently displayed questions.
     Raises:
-        HTTP 404 Not Found: If question or category information retrieval fails.
+        HTTP 404 Not Found: If no questions can be displayed on a page, 
+        or information retrieval fails.
     """
     try:
       q_selection = Question.query.order_by(Question.id).all()
@@ -121,6 +122,9 @@ def create_app(test_config=None):
       categories_dict = { category.id: category.type for category in c_selection }
 
       current_category = [ question['category'] for question in current_questions ]
+      
+      if len(current_questions) == 0:
+        abort(404)
 
       return jsonify({
         'success': True,
@@ -196,7 +200,8 @@ def create_app(test_config=None):
         created: An integer value representing an id of the created question.
         total_questions: An integer value representing a total number of questions after the creation.
     Raises:
-        HTTP 422 Unprocessable Entity Error: If question creation fails.
+        HTTP 422 Unprocessable Entity Error: If no value is given, 
+        or question creation fails.
     """
     body = request.get_json()
 
@@ -204,6 +209,9 @@ def create_app(test_config=None):
     new_answer = body.get('answer', None)
     new_difficulty = body.get('difficulty', None)
     new_category = body.get('category', None)
+
+    if not (new_question and new_answer and new_difficulty and new_category):
+      abort(422)
 
     try:
       question = Question(question=new_question, answer=new_answer, difficulty=new_difficulty, category=new_category)
@@ -292,12 +300,15 @@ def create_app(test_config=None):
         HTTP 404 Not Found: If question or category information retrieval fails.
     """
     try:
+      if id not in [0, 1, 2, 3, 4, 5, 6]:
+        abort(404)
+
       q_selection = Question.query.filter_by(category=str(id)).order_by(Question.id).all()
       questions = [ question.format() for question in q_selection ]
       current_category = [ question.category for question in q_selection ]
 
       return jsonify({
-        'Success': True,
+        'success': True,
         'questions': questions,
         'total_questions': len(q_selection),
         'current_category': current_category
@@ -329,16 +340,16 @@ def create_app(test_config=None):
         success: A boolean True representing information retrieval succeeds.
         questions: A list of dictionaries representing sets of questions.
     Raises:
-        HTTP 422 Unprocessable Entity Error: If no category is given.
-        HTTP 404 Not Found: If question information retrieval fails.
+        HTTP 404 Not Found: If wrong category is given, or 
+        question information retrieval fails.
     """
     body = request.get_json()
     previous_questions = body.get('previous_questions')
     quiz_category = body.get('quiz_category')
 
     try:
-      if not quiz_category:
-        return abort(422)
+      if quiz_category['id'] not in [0, 1, 2, 3, 4, 5, 6]:
+        abort(404)
 
       if quiz_category['id'] == 0:
         question = Question.query.filter(Question.id.notin_(previous_questions)).order_by(func.random()).first()
@@ -380,7 +391,7 @@ def create_app(test_config=None):
     return jsonify({
       'success': False,
       'error': 405,
-      'message': "method_not_allowed"
+      'message': "method not allowed"
     }), 405
 
 
