@@ -24,7 +24,7 @@ class TriviaTestCase(unittest.TestCase):
             self.db.create_all()
     
         self.new_question = {
-            'question': 'Who succeeded in Pop art industry with screen print images of Marilyn Monroe, soup cans?',
+            'question': 'Who succeeded in Pop art industry with screen print images of Marilyn Monroe and soup cans?',
             'answer': 'Andy Warhol',
             'difficulty': 2,
             'category': '2'
