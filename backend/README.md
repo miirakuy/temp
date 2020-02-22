@@ -260,7 +260,7 @@ play in every soccer World Cup tournament?"
 ```
 
 ### POST /questions
-- General: create a new question using a question, answer, difficulty, and category.
+- General: Create a new question using a question, answer, difficulty, and category.
     - Request Arguments: None.
     - Return: success value, an ID of a created question, and total number of questions.
 - Sample: `curl http://127.0.0.1:5000/questions?page=2 -X POST -H "Content- 
