@@ -265,7 +265,7 @@ play in every soccer World Cup tournament?"
     - Return: success value, an ID of a created question, and total number of questions.
 - Sample: `curl http://127.0.0.1:5000/questions?page=2 -X POST -H "Content- 
 Type: application/json" -d '{"question":"Who succeeded in Pop art  
-industry with screen print images of Marilyn Monroe, soup cans?",  
+industry with screen print images of Marilyn Monroe and soup cans?",  
 "answer":"Andy Warhol", "difficulty":"2", "category": "2"}'`
 
 ```
