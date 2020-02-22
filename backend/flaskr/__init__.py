@@ -120,7 +120,9 @@ def create_app(test_config=None):
 
       c_selection = Category.query.order_by(Category.id).all()
       categories_dict = { category.id: category.type for category in c_selection }
- 
+
+      current_category = [ question['category'] for question in current_questions ]
+
       if len(current_questions) == 0:
         abort(404)
 
@@ -128,7 +130,8 @@ def create_app(test_config=None):
         'success': True,
         'questions': current_questions,
         'total_questions': len(q_selection),
-        'categories': categories_dict
+        'categories': categories_dict,
+        'current_category': current_category
       })
 
     except Exception:
