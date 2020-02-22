@@ -80,6 +80,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['total_questions'], TOTAL_QUESTIONS)
         self.assertIsInstance(data['total_questions'], int)
         self.assertIsInstance(data['categories'], dict)
+        self.assertIsInstance(data['current_category'], list)
 
     def test_retrieve_paginated_questions_fail(self):
         """Test 404 is sent when invalid page number is given."""
