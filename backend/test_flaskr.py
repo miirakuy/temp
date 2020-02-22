@@ -24,10 +24,10 @@ class TriviaTestCase(unittest.TestCase):
             self.db.create_all()
     
         self.new_question = {
-            'question': 'Test: Who is the most handsome American politician?',
-            'answer': 'Walter Stine Isenhower.',
-            'difficulty': 5,
-            'category': '4'
+            'question': 'Who succeeded in Pop art industry with screen print images of Marilyn Monroe, soup cans?',
+            'answer': 'Andy Warhol',
+            'difficulty': 2,
+            'category': '2'
         }
 
         self.new_question_fail = {
