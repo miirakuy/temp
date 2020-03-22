@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flaskr import create_app
 from models import setup_db, Question, Category
 
+
 class TriviaTestCase(unittest.TestCase):
     """This class represents the trivia test case"""
 
@@ -13,7 +14,9 @@ class TriviaTestCase(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client
         self.database_name = "trivia_test"
-        self.database_path = "postgres://{}:{}@{}/{}".format('postgres', 'postgres', 'localhost:5432', self.database_name)
+        self.database_path = "postgres://{}:{}@{}/{}"\
+            .format('postgres', 'postgres', 'localhost:5432',
+                    self.database_name)
         setup_db(self.app, self.database_path)
 
         # binds the app to the current context
@@ -22,9 +25,10 @@ class TriviaTestCase(unittest.TestCase):
             self.db.init_app(self.app)
             # create all tables
             self.db.create_all()
-    
+
         self.new_question = {
-            'question': 'Who succeeded in Pop art industry with screen print images of Marilyn Monroe and soup cans?',
+            'question': 'Who succeeded in Pop art industry with\
+            screen print images of Marilyn Monroe and soup cans?',
             'answer': 'Andy Warhol',
             'difficulty': 2,
             'category': '2'
@@ -38,7 +42,7 @@ class TriviaTestCase(unittest.TestCase):
         }
 
         self.quiz = {
-            "previous_questions": [], 
+            "previous_questions": [],
             "quiz_category": {'id': 6, 'type': 'Sports'}
         }
 
@@ -53,7 +57,8 @@ class TriviaTestCase(unittest.TestCase):
 
     """
     TODO
-    Write at least one test for each test for successful operation and for expected errors.
+    Write at least one test for each test for
+    successful operation and for expected errors.
     """
     def test_retrieve_categories(self):
         """Test all categories are retrieved."""
@@ -92,7 +97,10 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'resource not found')
 
     def test_delete_question(self):
-        """Test a question is deleted only when the id exists, otherwise test fails."""
+        """
+        Test a question is deleted only when the id exists,
+        otherwise test fails.
+        """
         res = self.client().delete('/questions/4')
         data = json.loads(res.data)
         question = Question.query.get(4)
@@ -102,7 +110,8 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
         self.assertEqual(data['deleted'], 4)
-        self.assertEqual(data['total_questions'], TOTAL_QUESTIONS - 1 + TEST_CREATE_QUESTION)
+        self.assertEqual(data['total_questions'],
+                         TOTAL_QUESTIONS - 1 + TEST_CREATE_QUESTION)
         self.assertIsInstance(data['total_questions'], int)
         self.assertIsNone(question)
 
@@ -127,7 +136,8 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_create_new_question_no_value_fail(self):
         """Test 422 is sent when no value is given."""
-        res = self.client().post('/questions', json=self.new_question_fail, content_type='application/json')
+        res = self.client().post('/questions', json=self.new_question_fail,
+                                 content_type='application/json')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
