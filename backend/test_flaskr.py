@@ -101,15 +101,15 @@ class TriviaTestCase(unittest.TestCase):
         Test a question is deleted only when the id exists,
         otherwise test fails.
         """
-        res = self.client().delete('/questions/4')
+        res = self.client().delete('/questions/5')
         data = json.loads(res.data)
-        question = Question.query.get(4)
+        question = Question.query.get(5)
 
         TOTAL_QUESTIONS = 19
         TEST_CREATE_QUESTION = 1
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
-        self.assertEqual(data['deleted'], 4)
+        self.assertEqual(data['deleted'], 5)
         self.assertEqual(data['total_questions'],
                          TOTAL_QUESTIONS - 1 + TEST_CREATE_QUESTION)
         self.assertIsInstance(data['total_questions'], int)
