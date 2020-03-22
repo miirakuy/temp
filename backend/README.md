@@ -116,7 +116,7 @@ The API will return five error types when requests fail:
 
 ## Endpoints
 ### GET /categories
-- General: Retreive all categories.
+- General: Retrieve all categories.
     - Request Arguments: None.
     - Return: success value and a dictionary of categories.
 - Sample: `curl http://127.0.0.1:5000/categories`
@@ -278,7 +278,7 @@ industry with screen print images of Marilyn Monroe and soup cans?",
 ```
 
 ### POST /search
-- General: Retrieved questions based on a search term. The search term is a substring of the question, and is case-insensitive.
+- General: Retrieve questions based on a search term. The search term is a substring of the question, and is case-insensitive.
     - Request Arguments: None.
     - Return: success value, a list of a dictionary of questions corresponding to a search term, total number of searched questions, and a list of categories of searched questions.
 - Sample: `curl http://127.0.0.1:5000/search -X POST -H "Content-Type: application/json" -d '{"searchTerm": 1990}'`
